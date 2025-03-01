@@ -61,3 +61,57 @@
     </div>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>ZaiNCo - بث مباشر</title>
+    <!-- تضمين مكتبة HLS.js -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <style>
+        body {
+            margin: 0;
+            background: #0a0a0a;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #videoPlayer {
+            width: 90%;
+            max-width: 1200px;
+            margin: 50px auto;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+    <h1>ZaiNCo - بث مباشر</h1>
+    <video id="videoPlayer" controls></video>
+
+    <script>
+        // تعريف المتغيرات
+        const video = document.getElementById('videoPlayer');
+        const videoUrl = 'https://nox5-03.ukra1.shop/hls/pdomae45o2m4f4kmle2sd5zkg2fnwyhpiwhlu6bikfvbvftjkosfvznjqfua/index-v1-a1.m3u8';
+
+        // تهيئة مشغل HLS
+        if (Hls.isSupported()) {
+            const hls = new Hls();
+            hls.loadSource(videoUrl);
+            hls.attachMedia(video);
+            hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                video.play().catch(() => {
+                    alert('يُرجى النقر على "تشغيل" يدويًا بسبب سياسات المتصفح');
+                });
+            });
+        } 
+        // دعم Safari
+        else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            video.src = videoUrl;
+            video.addEventListener('loadedmetadata', () => {
+                video.play();
+            });
+        }
+    </script>
+</body>
+</html>
