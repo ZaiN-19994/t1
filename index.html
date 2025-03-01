@@ -2,22 +2,104 @@
 <html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مشغل الفيديو</title>
+    <title>مشغل فيديو عالمي</title>
+    <!-- تضمين مكتبات التشغيل -->
+    <link href="https://vjs.zencdn.net/8.0.4/video-js.css" rel="stylesheet">
+    <script src="https://vjs.zencdn.net/8.0.4/video.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
     <style>
-        body { text-align: center; font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; }
-        .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); }
-        video { width: 100%; border-radius: 10px; }
-        h2 { color: #333; }
+        body {
+            direction: rtl;
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        #my-player {
+            width: 100%;
+            max-width: 1000px;
+            margin: 20px auto;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .input-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        input[type="text"] {
+            width: 70%;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            border: 1px solid #444;
+        }
+        button {
+            padding: 10px 20px;
+            background: #007bff;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>اسم الفيلم: فيلم الأكشن 2024</h2>
-        <video controls poster="https://example.com/poster.jpg" preload="metadata">
-            <source src="https://noaz53-11.times20qu20.shop/6jmnqiqqzyazsalriwaalipua6hrovdz6g6wmmcot2blc6zg7xtjmhfu4i4q/v.mp4" type="video/mp4">
-            متصفحك لا يدعم تشغيل الفيديو.
-        </video>
+    <div class="input-container">
+        <input type="text" id="videoUrl" placeholder="أدخل رابط الفيديو هنا (MP4, HLS, DASH)">
+        <button onclick="loadVideo()">تشغيل</button>
     </div>
+
+    <video id="my-player" class="video-js vjs-default-skin" controls preload="auto">
+        <source id="video-source" type="application/x-mpegURL">
+    </video>
+
+    <script>
+        const player = videojs('my-player', {
+            controls: true,
+            autoplay: false,
+            responsive: true,
+            fluid: true,
+            playbackRates: [0.5, 1, 1.5, 2]
+        });
+
+        // دالة تحميل الفيديو
+        function loadVideo() {
+            const url = document.getElementById('videoUrl').value;
+            if (!url) return;
+
+            // تحديد نوع الفيديو تلقائيًا
+            let type = 'video/mp4';
+            if (url.includes('.m3u8')) type = 'application/x-mpegURL';
+            if (url.includes('.mpd')) type = 'application/dash+xml';
+
+            // إعادة تعيين المشغل
+            player.reset();
+
+            // تهيئة HLS
+            if (type === 'application/x-mpegURL') {
+                if (Hls.isSupported()) {
+                    const hls = new Hls();
+                    hls.loadSource(url);
+                    hls.attachMedia(player.tech().el());
+                    player.ready(() => hls.on(Hls.Events.MANIFEST_PARSED, () => player.play()));
+                } else if (player.tech().el().canPlayType('application/vnd.apple.mpegurl')) {
+                    player.src({ src: url, type: 'application/vnd.apple.mpegurl' });
+                }
+            }
+            // تهيئة DASH
+            else if (type === 'application/dash+xml') {
+                const dash = dashjs.MediaPlayer().create();
+                dash.initialize(player.tech().el(), url, true);
+            }
+            // MP4 عادي
+            else {
+                player.src({ type: 'video/mp4', src: url });
+            }
+
+            player.play();
+        }
+    </script>
 </body>
 </html>
