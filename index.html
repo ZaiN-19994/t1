@@ -2,103 +2,79 @@
 <html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <title>مشغل فيديو عالمي</title>
-    <!-- تضمين مكتبات التشغيل -->
-    <link href="https://vjs.zencdn.net/8.0.4/video-js.css" rel="stylesheet">
-    <script src="https://vjs.zencdn.net/8.0.4/video.min.js"></script>
+    <title>ZaiNCo Player</title>
+    <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet">
+    <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
     <style>
         body {
-            direction: rtl;
             margin: 0;
+            min-height: 100vh;
+            background: 
+                linear-gradient(45deg, #0f0c29, #302b63, #24243e),
+                repeating-linear-gradient(-45deg, 
+                    rgba(255,255,255,0.05) 0px, 
+                    rgba(255,255,255,0.05) 2px,
+                    transparent 2px,
+                    transparent 5px
+                );
+            font-family: 'Arial', sans-serif;
+        }
+
+        body::after {
+            content: "ZaiNCo";
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-10deg);
+            font-size: 25vw;
+            font-weight: 900;
+            color: rgba(255,255,255,0.03);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .player-container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 50px auto;
             padding: 20px;
-            background: #1a1a1a;
-            color: white;
-            font-family: Arial, sans-serif;
+            border-radius: 20px;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(15px);
         }
+
         #my-player {
-            width: 100%;
-            max-width: 1000px;
-            margin: 20px auto;
-            border-radius: 12px;
+            border-radius: 15px;
             overflow: hidden;
-        }
-        .input-container {
-            text-align: center;
-            margin: 20px 0;
-        }
-        input[type="text"] {
-            width: 70%;
-            padding: 10px;
-            margin: 10px;
-            border-radius: 5px;
-            border: 1px solid #444;
-        }
-        button {
-            padding: 10px 20px;
-            background: #007bff;
-            border: none;
-            color: white;
-            border-radius: 5px;
-            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
     </style>
 </head>
 <body>
-    <div class="input-container">
-        <input type="text" id="videoUrl" placeholder="أدخل رابط الفيديو هنا (MP4, HLS, DASH)">
-        <button onclick="loadVideo()">تشغيل</button>
+    <div class="player-container">
+        <video id="my-player" class="video-js vjs-big-play-centered" controls autoplay>
+            <source src="https://stream.mux.com/EcHgOK9coz5K4rjSwOkoE7Y7O01201YMIC200RI6lNxnhs.m3u8?redundant_streams=true" type="application/x-mpegURL">
+        </video>
     </div>
-
-    <video id="my-player" class="video-js vjs-default-skin" controls preload="auto">
-        <source id="video-source" type="application/x-mpegURL">
-    </video>
 
     <script>
         const player = videojs('my-player', {
             controls: true,
-            autoplay: false,
+            autoplay: true,
             responsive: true,
             fluid: true,
             playbackRates: [0.5, 1, 1.5, 2]
         });
 
-        // دالة تحميل الفيديو
-        function loadVideo() {
-            const url = document.getElementById('videoUrl').value;
-            if (!url) return;
-
-            // تحديد نوع الفيديو تلقائيًا
-            let type = 'video/mp4';
-            if (url.includes('.m3u8')) type = 'application/x-mpegURL';
-            if (url.includes('.mpd')) type = 'application/dash+xml';
-
-            // إعادة تعيين المشغل
-            player.reset();
-
-            // تهيئة HLS
-            if (type === 'application/x-mpegURL') {
-                if (Hls.isSupported()) {
-                    const hls = new Hls();
-                    hls.loadSource(url);
-                    hls.attachMedia(player.tech().el());
-                    player.ready(() => hls.on(Hls.Events.MANIFEST_PARSED, () => player.play()));
-                } else if (player.tech().el().canPlayType('application/vnd.apple.mpegurl')) {
-                    player.src({ src: url, type: 'application/vnd.apple.mpegurl' });
-                }
-            }
-            // تهيئة DASH
-            else if (type === 'application/dash+xml') {
-                const dash = dashjs.MediaPlayer().create();
-                dash.initialize(player.tech().el(), url, true);
-            }
-            // MP4 عادي
-            else {
-                player.src({ type: 'video/mp4', src: url });
-            }
-
-            player.play();
+        // تهيئة HLS إذا لزم الأمر
+        if (Hls.isSupported()) {
+            const hls = new Hls();
+            hls.attachMedia(player.tech().el());
+            hls.on(Hls.Events.MEDIA_ATTACHED, () => {
+                hls.loadSource(player.currentSrc());
+            });
         }
     </script>
 </body>
