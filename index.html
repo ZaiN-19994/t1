@@ -1,76 +1,205 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>ZaiNCo - بث مباشر</title>
-    <!-- أوصاف التعرف على التدفق -->
-    <meta name="streaming-url" content="https://aflam-cdn-cash-27-rty.dialymotion.online/yh5chvappxikjnl75zpkrld3vjqhvkpgeandur76ldtkfget6aa2ct4y4jpa/v.mp4">
-    <meta http-equiv="Content-Type" content="application/vnd.apple.mpegurl">
-    <meta property="og:video" content="https://aflam-cdn-cash-27-rty.dialymotion.online/yh5chvappxikjnl75zpkrld3vjqhvkpgeandur76ldtkfget6aa2ct4y4jpa/v.mp4">
-    <meta name="description" content="بث مباشر بواسطة ZaiNCo - HLS Stream">
-    <!-- مكتبات التشغيل -->
+    <title>ZaiNCo - Future Stream</title>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <!-- خطوط جوجل -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        body {
+        :root {
+            --main-blue: #2563eb;
+            --neon-blue: #3b82f6;
+            --dark-bg: #0f172a;
+            --glass-bg: rgba(15, 23, 42, 0.8);
+        }
+
+        * {
             margin: 0;
-            padding: 20px;
-            background: #0a0a0a;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        body {
+            background: var(--dark-bg);
             color: white;
-            font-family: Arial, sans-serif;
-            text-align: center;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
         }
-        .player-box {
-            max-width: 1200px;
-            margin: 30px auto;
-            padding: 20px;
-            background: rgba(0,0,0,0.7);
-            border-radius: 15px;
+
+        /* تأثير الخلفية الديناميكي */
+        .bg-effect {
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 50% 50%, 
+                    var(--main-blue) 0%, 
+                    transparent 70%);
+            opacity: 0.1;
+            animation: float 20s infinite linear;
+            z-index: 0;
         }
+
+        @keyframes float {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* تصميم المشغل */
+        .player-wrapper {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 2rem;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            box-shadow: 0 0 40px rgba(37, 99, 235, 0.2);
+            overflow: hidden;
+            margin-top: 4rem;
+            transition: transform 0.3s;
+        }
+
+        .player-wrapper:hover {
+            transform: translateY(-5px);
+        }
+
         #videoPlayer {
             width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-        }
-        .stream-info {
-            margin-top: 25px;
-            padding: 15px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 10px;
-        }
-        .copy-btn {
-            background: #4CAF50;
-            color: white;
+            height: 70vh;
             border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
+        }
+
+        /* معلومات التدفق */
+        .stream-info {
+            padding: 2rem;
+            border-top: 1px solid rgba(59, 130, 246, 0.1);
+        }
+
+        .stream-url-box {
+            background: rgba(37, 99, 235, 0.1);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            position: relative;
+            margin: 2rem 0;
+        }
+
+        .stream-url {
+            color: var(--neon-blue);
+            word-break: break-all;
+            font-size: 1.1rem;
+            padding-right: 50px;
+        }
+
+        .copy-icon {
+            position: absolute;
+            top: 50%;
+            left: 1.5rem;
+            transform: translateY(-50%);
             cursor: pointer;
-            margin: 10px;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: 0.3s;
+            background: rgba(59, 130, 246, 0.2);
+        }
+
+        .copy-icon:hover {
+            background: var(--neon-blue);
+        }
+
+        /* إرشادات الاستخدام */
+        .guide-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .guide-card {
+            background: var(--glass-bg);
+            padding: 2rem;
+            border-radius: 1.5rem;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            transition: 0.3s;
+        }
+
+        .guide-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .guide-card h3 {
+            color: var(--neon-blue);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .guide-card ul {
+            list-style: none;
+            line-height: 2;
         }
     </style>
 </head>
 <body>
-    <h1>🎥 ZaiNCo - بث مباشر</h1>
+    <div class="bg-effect"></div>
     
-    <div class="player-box">
-        <video id="videoPlayer" controls></video>
-        
-        <div class="stream-info">
-            <h3>🔗 رابط التدفق المباشر:</h3>
-            <div id="streamUrl" style="word-break: break-all; margin: 15px 0;">
-                https://nox5-03.ukra1.shop/.../index-v1-a1.m3u8
+    <div class="container">
+        <h1 style="text-align: center; font-size: 3rem; margin-bottom: 2rem; color: var(--neon-blue);">
+            <span style="text-shadow: 0 0 20px var(--neon-blue);">ZaiNCo</span> 🚀
+        </h1>
+
+        <div class="player-wrapper">
+            <video id="videoPlayer" controls></video>
+            
+            <div class="stream-info">
+                <div class="stream-url-box">
+                    <div class="stream-url" id="streamUrl">
+                        https://nox5-03.ukra1.shop/.../index-v1-a1.m3u8
+                    </div>
+                    <svg class="copy-icon" onclick="copyStreamUrl()" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M8 4v12h12V4H8zM6 2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/>
+                    </svg>
+                </div>
             </div>
-            <button class="copy-btn" onclick="copyStreamUrl()">نسخ الرابط</button>
-            
-            <h4>📲 كيفية الاستخدام مع التطبيقات:</h4>
-            <ul style="text-align: left; list-style: none;">
-                <li>▶️ <strong>VLC:</strong> Media → Open Network Stream → الصق الرابط</li>
-                <li>📥 <strong>IDM:</strong> انقر بزر الماوس الأيمن → خيار "Download with IDM"</li>
-                <li>📱 <strong>الجوال:</strong> انسخ الرابط → افتحه في تطبيق متوافق (مثل MX Player)</li>
-            </ul>
-            
-            <div style="margin-top: 20px; color: #888;">
-                <p>الصيغة: HLS (HTTP Live Streaming)</p>
-                <p>الجودة: متعددة الدقات | البروتوكول: HTTPS</p>
+        </div>
+
+        <div class="guide-section">
+            <div class="guide-card">
+                <h3>🎮 VLC</h3>
+                <ul>
+                    <li>1. افتح برنامج VLC</li>
+                    <li>2. اختر Media → Open Network Stream</li>
+                    <li>3. الصق الرابط وانقر Play</li>
+                </ul>
+            </div>
+
+            <div class="guide-card">
+                <h3>📥 IDM</h3>
+                <ul>
+                    <li>1. انقر بزر الماوس الأيمن</li>
+                    <li>2. اختر "Download with IDM"</li>
+                    <li>3. اضبط الإعدادات وابدأ التحميل</li>
+                </ul>
+            </div>
+
+            <div class="guide-card">
+                <h3>📱 الجوال</h3>
+                <ul>
+                    <li>1. انسخ الرابط</li>
+                    <li>2. افتحه في تطبيق MX Player</li>
+                    <li>3. استمتع بالبث!</li>
+                </ul>
             </div>
         </div>
     </div>
@@ -78,7 +207,7 @@
     <script>
         // تهيئة المشغل
         const video = document.getElementById('videoPlayer');
-        const streamUrl = 'https://aflam-cdn-cash-27-rty.dialymotion.online/yh5chvappxikjnl75zpkrld3vjqhvkpgeandur76ldtkfget6aa2ct4y4jpa/v.mp4';
+        const streamUrl = 'https://nox5-03.ukra1.shop/hls/pdomae45o2m4f4kmle2sd5zkg2fnwyhpiwhlu6bikfvbvftjkosfvznjqfua/index-v1-a1.m3u8';
 
         if (Hls.isSupported()) {
             const hls = new Hls();
@@ -90,11 +219,16 @@
             video.addEventListener('loadedmetadata', () => video.play());
         }
 
-        // دالة نسخ الرابط
+        // نسخ الرابط
         function copyStreamUrl() {
             navigator.clipboard.writeText(streamUrl)
-                .then(() => alert('تم نسخ الرابط!'))
-                .catch(() => alert('حدث خطأ أثناء النسخ'));
+                .then(() => {
+                    const icon = document.querySelector('.copy-icon');
+                    icon.style.background = 'var(--neon-blue)';
+                    setTimeout(() => {
+                        icon.style.background = 'rgba(59, 130, 246, 0.2)';
+                    }, 1000);
+                });
         }
     </script>
 </body>
