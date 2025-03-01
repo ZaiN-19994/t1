@@ -2,80 +2,62 @@
 <html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <title>ZaiNCo Player</title>
-    <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet">
-    <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <title>ZaiNCo Player - Video Stream</title>
+    <!-- تضمين أوصاف التعرف على التدفق -->
+    <meta name="streaming-url" content="https://stream.mux.com/EcHgOK9coz5K4rjSwOkoE7Y7O01201YMIC200RI6lNxnhs.m3u8?redundant_streams=true">
+    <meta http-equiv="Content-Type" content="video/mpegurl">
+    <meta property="og:video" content="https://stream.mux.com/EcHgOK9coz5K4rjSwOkoE7Y7O01201YMIC200RI6lNxnhs.m3u8?redundant_streams=true">
+    <!-- التنسيقات -->
     <style>
         body {
             margin: 0;
-            min-height: 100vh;
-            background: 
-                linear-gradient(45deg, #0f0c29, #302b63, #24243e),
-                repeating-linear-gradient(-45deg, 
-                    rgba(255,255,255,0.05) 0px, 
-                    rgba(255,255,255,0.05) 2px,
-                    transparent 2px,
-                    transparent 5px
-                );
-            font-family: 'Arial', sans-serif;
+            padding: 20px;
+            background: #0a0a0a;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
         }
-
-        body::after {
-            content: "ZaiNCo";
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-10deg);
-            font-size: 25vw;
-            font-weight: 900;
-            color: rgba(255,255,255,0.03);
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .player-container {
-            position: relative;
-            z-index: 1;
-            max-width: 1200px;
+        .video-info {
+            max-width: 800px;
             margin: 50px auto;
             padding: 20px;
-            border-radius: 20px;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(15px);
-        }
-
-        #my-player {
+            background: rgba(255,255,255,0.05);
             border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        a {
+            color: #4a90e2;
+            text-decoration: none;
+            word-break: break-all;
+        }
+        a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <div class="player-container">
-        <video id="my-player" class="video-js vjs-big-play-centered" controls autoplay>
-            <source src="https://stream.mux.com/EcHgOK9coz5K4rjSwOkoE7Y7O01201YMIC200RI6lNxnhs.m3u8?redundant_streams=true" type="application/x-mpegURL">
-        </video>
+    <div class="video-info">
+        <h1>فيديو مباشر - ZaiNCo</h1>
+        <h3>للتشغيل عبر التطبيقات الخارجية:</h3>
+        <p>انسخ الرابط أدناه والصقه في:</p>
+        <ul style="text-align: left; list-style: none;">
+            <li>▶️ <strong>VLC:</strong> Media → Open Network Stream</li>
+            <li>📥 <strong>Internet Download Manager:</strong> اضغط زر "Add URL"</li>
+            <li>📱 <strong>تطبيقات الجوال:</strong> افتح الرابط مباشرة</li>
+        </ul>
+        <!-- الرابط المباشر مع وصف تفصيلي -->
+        <div style="margin: 30px 0;">
+            <a href="https://stream.mux.com/EcHgOK9coz5K4rjSwOkoE7Y7O01201YMIC200RI6lNxnhs.m3u8?redundant_streams=true" 
+               title="HLS Stream - ZaiNCo" 
+               type="application/vnd.apple.mpegurl">
+               https://stream.mux.com/EcHgOK9coz5K4rjSwOkoE7Y7O01201YMIC200RI6lNxnhs.m3u8
+            </a>
+        </div>
+        <!-- معلومات تقنية -->
+        <div style="font-size: 0.9em; color: #888;">
+            <p>الصيغة: HLS (HTTP Live Streaming)</p>
+            <p>الجودة: متعددة الدقات (Adaptive Bitrate)</p>
+            <p>البروتوكول: HTTPS</p>
+        </div>
     </div>
-
-    <script>
-        const player = videojs('my-player', {
-            controls: true,
-            autoplay: true,
-            responsive: true,
-            fluid: true,
-            playbackRates: [0.5, 1, 1.5, 2]
-        });
-
-        // تهيئة HLS إذا لزم الأمر
-        if (Hls.isSupported()) {
-            const hls = new Hls();
-            hls.attachMedia(player.tech().el());
-            hls.on(Hls.Events.MEDIA_ATTACHED, () => {
-                hls.loadSource(player.currentSrc());
-            });
-        }
-    </script>
 </body>
 </html>
